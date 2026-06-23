@@ -1,0 +1,4 @@
+[
+  {"input": "Hello, how do I reset my password?", "expected": "Provide password reset link"},
+  {"input": "My order #999 hasn't shipped yet.", "expected": "Provide shipping status update"}
+]
