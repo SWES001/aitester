@@ -80,12 +80,17 @@ def main():
     print("=====================================================")
     
     while True:
+
         user_input = input("tester-app> ").strip()
         if not user_input:
             continue
             
         parts = user_input.split()
         command = parts[0].lower()
+        
+
+
+
         
         if command in ["exit", "quit"]:
             print("Closing application. Goodbye!")
