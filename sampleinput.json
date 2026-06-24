@@ -1,0 +1,9 @@
+{
+    "modelName":
+    {
+        "ipAddress":"192.168.1.1:33000",
+        "folderAddress":"C:\\Users\\User\\Documents\\ModelData",
+        "dataurl":"http://example.com/data",
+        "parameters":"temperature=0.7,top_p=0.9,top_k=50,max_tokens=100,repetition_penalty=1.2"
+    }
+}

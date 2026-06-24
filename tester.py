@@ -4,6 +4,8 @@ import os
 import time
 from datetime import datetime
 
+#from openai import models
+
 # --- CONFIGURING OUR FOLDER PATHS ---
 MODELS_DIR = "models"
 DATASETS_DIR = "datasets"
@@ -71,6 +73,59 @@ def run_evaluation(model_name, dataset_file):
             
     print(f"✅ Evaluation complete! Results saved to: {csv_filename}\n")
 
+def create(modelName):
+    
+    ipAdd = input("IP Address: ").strip()
+    folderAdd = input("Dataset Folder Address (csv): ").strip()
+    dataUrl = input("Dataset URL (Internet): ").strip()
+    temp = input("Default Parameter Temperature: ").strip()
+    topP = input("Default Parameter Top_P: ").strip()
+    topK = input("Default Parameter Top_K: ").strip()
+    maxTok = input("Default Parameter Max Tokens: ").strip()
+    repPen = input("Default Parameter Repetition Penalty: ").strip()
+
+
+    with open("models.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+    data[modelName] = {
+    "ipAddress": ipAdd,
+    "folderAddress": folderAdd,
+    "dataurl": dataUrl,
+    "parameters": f"temperature={temp},top_p={topP},top_k={topK},max_tokens={maxTok},repetition_penalty={repPen}"
+    }
+    with open("models.json", "w", encoding="utf-8") as f:
+        json.dump(data, f)
+
+def edit(modelName, what):
+    with open("models.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+    if modelName not in data:
+        print(f"❌ Model '{modelName}' not found in models.json.")
+        return
+
+    if what == "ip":
+        new_ip = input("New IP Address: ").strip()
+        data[modelName]["ipAddress"] = new_ip
+    elif what == "folder":
+        new_folder = input("New Dataset Folder Address (csv): ").strip()
+        data[modelName]["folderAddress"] = new_folder
+    elif what == "url":
+        new_url = input("New Dataset URL (Internet): ").strip()
+        data[modelName]["dataurl"] = new_url
+    elif what == "params":
+        temp = input("Default Parameter Temperature: ").strip()
+        topP = input("Default Parameter Top_P: ").strip()
+        topK = input("Default Parameter Top_K: ").strip()
+        maxTok = input("Default Parameter Max Tokens: ").strip()
+        repPen = input("Default Parameter Repetition Penalty: ").strip()
+        data[modelName]["parameters"] = f"temperature={temp},top_p={topP},top_k={topK},max_tokens={maxTok},repetition_penalty={repPen}"
+    else:
+        print(f"❌ Unknown edit option '{what}'.")
+        return
+
+    with open("models.json", "w", encoding="utf-8") as f:
+        json.dump(data, f)
+    print(f"✅ Model '{modelName}' updated successfully.")
 
 # --- MAIN INTERACTIVE TERMINAL ---
 def main():
@@ -82,19 +137,22 @@ def main():
     while True:
 
         user_input = input("tester-app> ").strip()
-        if not user_input:
-            continue
             
         parts = user_input.split()
         command = parts[0].lower()
         
-
-
-
         
         if command in ["exit", "quit"]:
             print("Closing application. Goodbye!")
             break
+
+        elif command == "create":
+            name = parts[1].lower()
+            create(name)
+            
+        elif command == "edit":
+            name = parts[1].lower()
+            edit(name, p)
             
         elif command == "help":
             print("\nCommands Layout:")
