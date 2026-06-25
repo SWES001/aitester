@@ -4,7 +4,7 @@ import os
 import time
 from datetime import datetime
 from pathlib import Path
-
+from asr_benchmark import run_benchmark
 
 #from openai import models
 
@@ -82,6 +82,8 @@ def create(modelName):
     if mode == "asr-transcription":
         folderAdd = input("Audio Dataset Folder Address: ").strip() 
         transcript_file = input("GroundTruth Transcript File Name (csv): ").strip()
+        language = input("Language (ex: en, ja): ").strip()
+        response_format = input("Response format (json/text): ").strip()
     elif mode == "llm-translation":
         folderAdd = input("Dataset Folder Address (csv): ").strip()
         temp = input("Default Parameter Temperature: ").strip()
@@ -105,6 +107,10 @@ def create(modelName):
             "transcriptFile": transcript_file,
             "dataurl": dataUrl,
             "endpointPath": path,
+            "parameters": {
+                "language": language,
+                "response_format": response_format
+            }
         }
     elif mode == "llm-translation":
         data[modelName] = {
@@ -192,6 +198,38 @@ def list():
         for item, value in desc.items():
             print("  " + item + ": " + str(value))
 
+def start(modelName):
+    with open("models.json", "r", encoding="utf-8") as f:
+        configs = json.load(f)
+
+    if modelName not in configs:
+        print("Preset not found")
+        return
+
+    model_settings = configs[modelName]
+    mode = model_settings.get("mode")
+
+    if mode == "asr":
+        run_benchmark(
+            model=model_settings["modelID"],
+            ip_address=model_settings["ipAddress"],
+            dataset=model_settings["folderAddress"],
+            manifest=model_settings["transcriptFile"],
+            endpoint=model_settings["endpointPath"],
+            parameters=model_settings.get("parameters", {}),
+            runs=model_settings.get("runs", 5)
+        )
+
+    elif mode == "llm-translation":
+        run_evaluation(
+            modelName,
+            model_settings["folderAddress"]
+        )
+
+    else:
+        print(f"Unknown mode: {mode}")
+
+
 # --- MAIN INTERACTIVE TERMINAL ---
 def main():
     print("=====================================================")
@@ -235,39 +273,11 @@ def main():
             
         elif command == "list":
             list()
-            
+        
         elif command == "run":
-            models = get_available_models()
-            datasets = get_available_datasets()
-            
-            if not models or not datasets:
-                print("❌ Cannot run. You need at least one model and one dataset file in their respective folders.")
-                continue
-                
-            # Step-by-step picker for the employee
-            print("\n--- Step 1: Choose a Model ---")
-            for idx, m in enumerate(models, 1):
-                print(f" [{idx}] {m}")
-            try:
-                model_choice = int(input("Select model number: ")) - 1
-                chosen_model = models[model_choice]
-            except (ValueError, IndexError):
-                print("❌ Invalid choice. Aborting run.")
-                continue
-
-            print("\n--- Step 2: Choose a Dataset ---")
-            for idx, d in enumerate(datasets, 1):
-                print(f" [{idx}] {d}")
-            try:
-                dataset_choice = int(input("Select dataset number: ")) - 1
-                chosen_dataset = datasets[dataset_choice]
-            except (ValueError, IndexError):
-                print("❌ Invalid choice. Aborting run.")
-                continue
-                
-            # Trigger execution
-            run_evaluation(chosen_model, chosen_dataset)
-            
+            name = input("Preset name: ").strip().lower()
+            start(name)
+        
         else:
             print(f"❌ Unknown command: '{user_input}'. Type 'help' for a list of commands.")
 
