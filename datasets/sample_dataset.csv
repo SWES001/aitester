@@ -1,0 +1,17 @@
+Input,Expected Output
+"¿Hola, cómo estás?","Hello, how are you?"
+Quiero tomar agua.,I want to drink water.
+Mi nombre es Ben.,My name is Ben.
+Tomé agua.,I drank water.
+Tome agua.,Drink water.
+"Estaba tomando agua, no tenía tiempo para ti.","I was drinking water, I don’t have time for you."
+"Si la agua fuera fría, la tomaría.","If the water were cold, I would drink it."
+Tomaré agua.,I will drink water.
+Dudo que hayas tomado agua.,I doubt that you have drank water.
+Quiero que tomes agua.,I want you to drink water.
+Tomaste agua.,You drank water.
+Tomó agua.,He drank water.
+Tomaron agua.,They drank water.
+Voy a tomar agua.,I am going to drink water.
+No tomen agua.,Don’t drink water.
+Translate the following text into eng_Latn. Note that you should only output the translated result without any additional explanation: Tomaré agua.,
