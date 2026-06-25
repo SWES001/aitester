@@ -138,6 +138,13 @@ def edit(modelName, what):
         json.dump(data, f)
     print(f"✅ Model '{modelName}' updated successfully.")
 
+def list():
+    configs = json.load(Path("models.json").open())
+    for name, desc in configs.items():
+        print(name)
+        for item, value in desc.items():
+            print("  " + item + ": " + str(value))
+
 # --- MAIN INTERACTIVE TERMINAL ---
 def main():
     print("=====================================================")
@@ -178,21 +185,7 @@ def main():
             print("  exit               - Close the program\n")
             
         elif command == "list":
-            models = get_available_models()
-            datasets = get_available_datasets()
-            
-            print(f"\n📂 Models found in /{MODELS_DIR}:")
-            if models:
-                for m in models: print(f"  • {m}")
-            else:
-                print("  (No files found. Drop a model file into the 'models' folder!)")
-                
-            print(f"\n📂 Datasets found in /{DATASETS_DIR}:")
-            if datasets:
-                for d in datasets: print(f"  • {d}")
-            else:
-                print("  (No .json files found. Drop a dataset file into the 'datasets' folder!)")
-            print("")
+            list()
             
         elif command == "run":
             models = get_available_models()
