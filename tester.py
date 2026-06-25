@@ -76,33 +76,58 @@ def run_evaluation(model_name, dataset_file):
     print(f"✅ Evaluation complete! Results saved to: {csv_filename}\n")
 
 def create(modelName):
-    
+    mode = input("Model mode (asr-transcription / llm-translation): ").strip().lower()
+    modelID = input("Model ID: ").strip()
     ipAdd = input("IP Address: ").strip()
-    folderAdd = input("Dataset Folder Address (csv): ").strip()
+    if mode == "asr-transcription":
+        folderAdd = input("Audio Dataset Folder Address: ").strip() 
+        transcript_file = input("GroundTruth Transcript File Name (csv): ").strip()
+    elif mode == "llm-translation":
+        folderAdd = input("Dataset Folder Address (csv): ").strip()
+        temp = input("Default Parameter Temperature: ").strip()
+        topP = input("Default Parameter Top_P: ").strip()
+        topK = input("Default Parameter Top_K: ").strip()
+        maxTok = input("Default Parameter Max Tokens: ").strip()
+        repPen = input("Default Parameter Repetition Penalty: ").strip()
     dataUrl = input("Dataset URL (Internet): ").strip()
-    temp = input("Default Parameter Temperature: ").strip()
-    topP = input("Default Parameter Top_P: ").strip()
-    topK = input("Default Parameter Top_K: ").strip()
-    maxTok = input("Default Parameter Max Tokens: ").strip()
-    repPen = input("Default Parameter Repetition Penalty: ").strip()
+    path = input("Endpoint Path: ").strip()
 
 
     with open("models.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-    data[modelName] = {
-    "ipAddress": ipAdd,
-    "folderAddress": folderAdd,
-    "dataurl": dataUrl,
-    "parameters": f"temperature={temp},top_p={topP},top_k={topK},max_tokens={maxTok},repetition_penalty={repPen}"
-    }
+
+    if mode == "asr-transcription":
+        data[modelName] = {
+            "mode": mode,
+            "modelID": modelID,
+            "ipAddress": ipAdd,
+            "folderAddress": folderAdd,
+            "transcriptFile": transcript_file,
+            "dataurl": dataUrl,
+            "endpointPath": path,
+        }
+    elif mode == "llm-translation":
+        data[modelName] = {
+            "mode": mode,
+            "modelID": modelID,
+            "ipAddress": ipAdd,
+            "folderAddress": folderAdd,
+            "dataurl": dataUrl,
+            "endpointPath": path,
+            "parameters": f"temperature={temp},top_p={topP},top_k={topK},max_tokens={maxTok},repetition_penalty={repPen}"
+        }
+    else:
+        print(f"Unknown mode '{mode}'. Model not saved.")
+        return
+
     with open("models.json", "w", encoding="utf-8") as f:
-        json.dump(data, f)
+        json.dump(data, f, indent=2)
 
 def delete(name):
     configs = json.load(Path("models.json").open())
     if name in configs:
         del configs[name]
-        json.dump(configs, Path("models.json").open("w"), indent=1)
+        json.dump(configs, Path("models.json").open("w"), indent=2)
         print("Deleted preset " + name)
     else:
         print("Preset not found")
@@ -113,29 +138,51 @@ def edit(modelName, what):
     if modelName not in data:
         print(f"❌ Model '{modelName}' not found in models.json.")
         return
-
+    mode = data[modelName]["mode"]
     if what == "ip":
         new_ip = input("New IP Address: ").strip()
         data[modelName]["ipAddress"] = new_ip
     elif what == "folder":
-        new_folder = input("New Dataset Folder Address (csv): ").strip()
+        new_folder = input("New Dataset Folder Address: ").strip()
         data[modelName]["folderAddress"] = new_folder
     elif what == "url":
         new_url = input("New Dataset URL (Internet): ").strip()
         data[modelName]["dataurl"] = new_url
-    elif what == "params":
+    elif what == "path":
+        new_path = input("New Endpoint Path: ").strip()
+        data[modelName]["endpointPath"] = new_path
+    elif what == "modelid":
+        new_modelid = input("New Model ID: ").strip()
+        data[modelName]["modelID"] = new_modelid
+    elif what == "mode":
+        new_mode = input("New Mode (asr-transcription / llm-translation): ").strip().lower()
+        if new_mode in ["asr-transcription", "llm-translation"]:
+            data[modelName]["mode"] = new_mode
+        else:
+            print(f"Invalid mode.")
+            return
+    elif what == "transcript" and mode == "asr-transcription":
+        new_transcript = input("New GroundTruth Transcript File Name (csv): ").strip()
+        data[modelName]["transcriptFile"] = new_transcript
+    elif what == "params" and mode == "llm-translation":
         temp = input("Default Parameter Temperature: ").strip()
         topP = input("Default Parameter Top_P: ").strip()
         topK = input("Default Parameter Top_K: ").strip()
         maxTok = input("Default Parameter Max Tokens: ").strip()
         repPen = input("Default Parameter Repetition Penalty: ").strip()
         data[modelName]["parameters"] = f"temperature={temp},top_p={topP},top_k={topK},max_tokens={maxTok},repetition_penalty={repPen}"
+    elif what == "params" and mode != "llm-translation":
+        print(f"Cannot edit parameters for mode '{mode}'.")
+        return
+    elif what == "transcript" and mode != "asr-transcription":
+        print(f"Cannot edit transcript for mode '{mode}'.")
+        return
     else:
         print(f"❌ Unknown edit option '{what}'.")
         return
 
     with open("models.json", "w", encoding="utf-8") as f:
-        json.dump(data, f)
+        json.dump(data, f, indent=2)
     print(f"✅ Model '{modelName}' updated successfully.")
 
 def list():
@@ -170,7 +217,8 @@ def main():
             
         elif command == "edit":
             name = parts[1].lower()
-            edit(name, p)
+            what = parts[2].lower() if len(parts) > 2 else None
+            edit(name, what)
         
         elif command == "delete":
             name = parts[1].lower()
@@ -180,8 +228,9 @@ def main():
             print("\nCommands Layout:")
             print("  list               - Scan the folders and show available models & datasets")
             print("  run                - Start a test by selecting a model and a dataset")
-            print("  create             - Create a new model preset with the given name")
-            print("  delete             - Delete an existing model preset")
+            print("  create <name>      - Create a new model preset with the given name")
+            print("  delete <name>      - Delete an existing model preset")
+            print("  edit <name> <what> - Edit a model preset's details (ip, folder, url, path, modelid, mode, transcript, params)")
             print("  exit               - Close the program\n")
             
         elif command == "list":

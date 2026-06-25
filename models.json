@@ -1,1 +1,20 @@
-{"qwn3": {"ipAddress": "a", "folderAddress": "a", "dataurl": "a", "parameters": "temperature=a,top_p=a,top_k=a,max_tokens=,repetition_penalty=a"}}
+{
+  "cohere": {
+    "mode": "asr",
+    "modelID": "CohereLabs/cohere-transcribe-03-2026",
+    "ipAddress": "74.2.96.26:31234",
+    "folderAddress": "C:\\Users\\tatte\\Documents\\test-clean-audio",
+    "transcriptFile": "C:\\Users\\tatte\\Documents\\test-clean-audio-transcripts",
+    "dataurl": "https://www.openslr.org/60/",
+    "endpointPath": "v1/audio/transcriptions"
+  },
+  "qwn3": {
+    "mode": "llm-translation",
+    "modelID": "a",
+    "ipAddress": "a",
+    "folderAddress": "a",
+    "dataurl": "a",
+    "endpointPath": "a",
+    "parameters": "temperature=a,top_p=a,top_k=a,max_tokens=a,repetition_penalty=a"
+  }
+}

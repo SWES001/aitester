@@ -7,7 +7,7 @@ def delete():
     target = input("Which preset would you like to delete? ").strip()
     if target in configs:
         del configs[target]
-        json.dump(configs, Path("models.json").open("w"), indent=1)
+        json.dump(configs, Path("models.json").open("w"), indent=2)
         print("Deleted preset " + target)
     else:
         print("Preset not found")
