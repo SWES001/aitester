@@ -3,6 +3,8 @@ import json
 import os
 import time
 from datetime import datetime
+from pathlib import Path
+
 
 #from openai import models
 
@@ -96,6 +98,15 @@ def create(modelName):
     with open("models.json", "w", encoding="utf-8") as f:
         json.dump(data, f)
 
+def delete(name):
+    configs = json.load(Path("models.json").open())
+    if name in configs:
+        del configs[name]
+        json.dump(configs, Path("models.json").open("w"), indent=1)
+        print("Deleted preset " + name)
+    else:
+        print("Preset not found")
+
 def edit(modelName, what):
     with open("models.json", "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -153,11 +164,17 @@ def main():
         elif command == "edit":
             name = parts[1].lower()
             edit(name, p)
-            
+        
+        elif command == "delete":
+            name = parts[1].lower()
+            delete(name)
+
         elif command == "help":
             print("\nCommands Layout:")
             print("  list               - Scan the folders and show available models & datasets")
             print("  run                - Start a test by selecting a model and a dataset")
+            print("  create             - Create a new model preset with the given name")
+            print("  delete             - Delete an existing model preset")
             print("  exit               - Close the program\n")
             
         elif command == "list":
