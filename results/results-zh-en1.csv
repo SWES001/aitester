@@ -1,7 +1,7 @@
-Model Name,hy-mt2-1.8b
-IP Address/Port,74.2.96.26:32232
-Parameters,"temperature=0.7,top_p=0.6,top_k=20,max_tokens=4096,repetition_penalty=1.05"
-
+Model Name,hy-mt2-1.8b,,
+IP Address/Port,74.2.96.26:32232,,
+Parameters,"temperature=0.7,top_p=0.6,top_k=20,max_tokens=4096,repetition_penalty=1.05",,
+Model Name,https://www.kaggle.com/datasets/programmer3/english-translation-dataset,,
 Input,Expected Output,Actual Output,Time Taken (s)
 气候变化影响全球生态系统。,Climate change affects global ecosystems.,Climate change affects global ecosystems.,0.2147
 法官宣布了判决结果。,The judge announced the verdict.,The judge announced the verdict.,0.1988

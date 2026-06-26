@@ -1,7 +1,7 @@
-Model Name,hy-mt2-1.8b
-IP Address/Port,74.2.96.26:32232
-Parameters,"temperature=0.7,top_p=0.6,top_k=20,max_tokens=4096,repetition_penalty=1.05"
-
+Model Name,hy-mt2-1.8b,,
+IP Address/Port,74.2.96.26:32232,,
+Parameters,"temperature=0.7,top_p=0.6,top_k=20,max_tokens=4096,repetition_penalty=1.05",,
+Link to Dataset,https://www.kaggle.com/datasets/programmer3/japaneseenglish-translation-dataset,,
 Input,Expected Output,Actual Output,Time Taken (s)
 この手法は翻訳精度を大幅に向上させる。,This method significantly improves translation accuracy.,This method significantly improves translation accuracy.,0.2226
 この技術は医療データ分析に応用できる。,This technology can be applied to medical data analysis.,This technology can be applied to medical data analysis.,0.2075
