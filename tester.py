@@ -202,7 +202,10 @@ def delete(name):
     else:
         print("Preset not found")
 
-def edit(modelName, what):
+def edit():
+    modelName = input("Model Name: ").strip()
+    what = input("What to edit (ip/folder/url/params/endpoint/prompt): ").strip()
+
     with open("models.json", "r", encoding="utf-8") as f:
         data = json.load(f)
     if modelName not in data:
@@ -270,9 +273,7 @@ def main():
             create()
             
         elif command == "edit":
-            name = parts[1].lower()
-            what = parts[2].lower() if len(parts) > 2 else None
-            edit(name, what)
+            edit()
         
         elif command == "delete":
             name = parts[1].lower()
