@@ -1,0 +1,20 @@
+Model Name,hy-mt2-1.8b
+IP Address/Port,74.2.96.26:32232
+Parameters,"temperature=0.7,top_p=0.6,top_k=20,max_tokens=4096,repetition_penalty=1.05"
+
+Input,Expected Output,Actual Output,Time Taken (s)
+"¿Hola, cómo estás?","Hello, how are you?","Hi, how are you?",0.1962
+Quiero tomar agua.,I want to drink water.,I want to drink water.,0.171
+Mi nombre es Ben.,My name is Ben.,My name is Ben.,0.1689
+Mi teclado está muy sucio.,My keyboard is very dirty.,My keyboard is very dirty.,0.1763
+Tome agua.,Drink water.,Give water.,0.166
+"Estaba tomando agua, no tenía tiempo para ti.","I was drinking water, I don’t have time for you.",I was drinking water; I didn’t have time for you.,0.2043
+"Si la agua fuera fría, la tomaría.","If the water were cold, I would drink it.","If the water were cold, I would take it.",0.1911
+Tomaré agua.,I will drink water.,I will drink water.,0.1704
+Dudo que hayas tomado agua.,I doubt that you have drank water.,I think you might have taken some water.,0.1824
+Quiero que tomes agua.,I want you to drink water.,I want you to drink water.,0.1795
+Tomaste agua.,You drank water.,You took water.,0.1688
+Tomó agua.,He drank water.,Took water.,0.1666
+Tomaron agua.,They drank water.,They took water.,0.168
+Voy a tomar agua.,I am going to drink water.,I will take water.,0.1701
+No tomen agua.,Don’t drink water.,Don’t take water.,0.1701

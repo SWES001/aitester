@@ -1,10 +1,10 @@
 {
-    "hy-mt2-1.8b": {
-        "ipAddress": "74.2.96.26:32232",
-        "endpoint": "/v1/chat/completions",
-        "folderAddress": "/Users/benguo/Documents/GitHub/aitester/datasets/sample_data.csv",
-        "dataurl": "poop'",
-        "parameters": "temperature=0.7,top_p=0.6,top_k=20,max_tokens=4096,repetition_penalty=1.05",
-        "prompt": "Translate the following text into eng_Latn. Note that you should only output the translated result without any additional explanation:"
-    }
+ "hy-mt2-1.8b": {
+  "ipAddress": "74.2.96.26:32232",
+  "endpoint": "/v1/chat/completions",
+  "folderAddress": "/Users/benguo/Documents/GitHub/aitester/datasets/sample_data.csv",
+  "dataurl": "poop'",
+  "parameters": "temperature=0.7,top_p=0.6,top_k=20,max_tokens=4096,repetition_penalty=1.05",
+  "prompt": "Translate the following text into eng_Latn. Note that you should only output the translated result without any additional explanation:"
+ }
 }

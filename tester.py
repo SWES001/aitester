@@ -119,6 +119,80 @@ def create():
         print(f"❌ Critical Error saving data to file: {e}\n")
 
 
+def start(modelName, datasetName):
+    filename = "models.json"
+    
+    if not os.path.exists(filename):
+        print("❌ Error: models.json missing. Run 'create' first.")
+        return
+        
+    with open(filename, "r", encoding="utf-8") as f:
+        models_config = json.load(f)
+        
+    if modelName not in models_config:
+        print(f"❌ Error: Model settings for '{modelName}' not found.")
+        return
+        
+    model_settings = models_config[modelName]
+    
+    print(f"\n🔌 Loading engine: {MODELS_DIR}/generic_api.py ...")
+    try:
+        model_module = importlib.import_module("models.generic_api")
+    except Exception as e:
+        print(f"❌ Error: Could not load 'models/generic_api.py'.\nDetail: {e}")
+        return
+
+    dataset_path = os.path.join(DATASETS_DIR, datasetName)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    csv_filename = os.path.join(RESULTS_DIR, f"eval_{modelName}_{timestamp}.csv")
+    
+    try:
+        with open(dataset_path, mode='r', encoding='utf-8') as infile, \
+             open(csv_filename, mode='w', newline='', encoding='utf-8') as outfile:
+                 
+            reader = csv.reader(infile)
+            writer = csv.writer(outfile)
+            
+            next(reader, None) # Skip CSV header row
+            
+            writer.writerow(["Model Name", modelName])
+            writer.writerow(["IP Address/Port", model_settings.get("ipAddress")])
+            writer.writerow(["Parameters", model_settings.get("parameters")])
+            writer.writerow([]) 
+            writer.writerow(["Input", "Expected Output", "Actual Output", "Time Taken (s)"])
+            
+            for i, row in enumerate(reader, 1):
+                if not row or len(row) < 2:
+                    continue
+                    
+                raw_input_text = row[0]
+                expected = row[1]
+                
+                # 🛠️ STRATEGY FIX: Build the prompt right here before handing it to the module!
+                prefix = model_settings.get("prompt", "").strip()
+                if prefix and not prefix.endswith(" "):
+                    prefix += " "
+                
+                final_compiled_prompt = f"{prefix}{raw_input_text}"
+                
+                print(f" ⏳ Evaluating row {i}...")
+                print(f"    [DEBUG SENDING] \"{final_compiled_prompt}\"")
+                
+                start_time = time.time()
+                
+                # Send the fully-combined string directly over to the dynamic runner
+                actual_output = model_module.generate_response(final_compiled_prompt, model_settings)
+                
+                end_time = time.time()
+                elapsed = round(end_time - start_time, 4)
+                
+                # Log the original clean input text to the final spreadsheet row
+                writer.writerow([raw_input_text, expected, actual_output, elapsed])
+                
+        print(f"✅ Evaluation complete! Results saved to: {csv_filename}\n")
+    except Exception as e:
+        print(f"❌ Critical error during run: {e}")
+
 def delete(name):
     configs = json.load(Path("models.json").open())
     if name in configs:
@@ -197,11 +271,22 @@ def main():
             
         elif command == "edit":
             name = parts[1].lower()
-            edit(name, p)
+            what = parts[2].lower() if len(parts) > 2 else None
+            edit(name, what)
         
         elif command == "delete":
             name = parts[1].lower()
             delete(name)
+
+        elif command == "start":
+            entered = input("[model] [dataset]").strip()
+            splitted = entered.split()
+            if len(splitted) >= 2:
+                model = splitted[0].lower()
+                dataset = splitted[1].lower()
+                start(model, dataset)
+            else:
+                print("❌ Usage: start [model_name] [dataset_file.csv]")
 
         elif command == "help":
             print("\nCommands Layout:")
